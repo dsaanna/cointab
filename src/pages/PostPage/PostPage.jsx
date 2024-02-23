@@ -11,6 +11,7 @@ const PostPage = () => {
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
   const [showDownloadInExcel, setshowDownloadInExcel] = useState(false); 
+  const [showBulkAdd, setShowBulkAdd] = useState(true)
   const baseURL = 'https://sleepy-sari-duck.cyclic.app';
 
   useEffect(() => {
@@ -31,10 +32,24 @@ const PostPage = () => {
       .catch(error => {
         console.error('Error fetching posts:', error);
       });
+
+      // Fetch posts for the specific userId from database
+    axios.get(`${baseURL}/user/posts/${id}`)
+    .then(response => {
+      if(response.data.length > 0){
+        setShowBulkAdd(false)
+        setshowDownloadInExcel(true)
+        
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching posts:', error);
+    });
   }, [id]);
 
   const handleBulkAddClick = async () => {
     setshowDownloadInExcel(true)
+    setShowBulkAdd(false)
     // Implement your logic for bulk adding posts here
     const response = await axios.post(`${baseURL}/bulk/posts`, posts );
     // console.log(response)
@@ -88,26 +103,30 @@ const PostPage = () => {
   };
 
   return (
-    <div className='postpagecontainer'>
+    <div className="postpagecontainer">
       {user && (
-        <div>
+        <div className="user-info">
           <h2>User Information:</h2>
-          <p>Name: {user.name}</p>
-          <p>Company: {user.company.name}</p>
+          <div>
+            <p><b>Name:</b> {user.name}</p>
+            <p><b>Company:</b> {user.company.name}</p>
+          </div>
         </div>
       )}
-         {/* Buttons section */}
-      <div style={{ marginBottom: '20px' }}>
-        <button onClick={handleBulkAddClick}>Bulk Add</button>
+      {/* Buttons section */}
+      <div className="buttons-container">
+        {showBulkAdd && (
+          <button onClick={handleBulkAddClick}>Bulk Add</button>
+        )}
         {showDownloadInExcel && (
-            <button onClick={handleDownloadExcelClick}>Download In Excel</button>
+          <button onClick={handleDownloadExcelClick}>Download In Excel</button>
         )}
       </div>
 
       <h2>Posts:</h2>
-      <div>
+      <div className="posts-container">
         {posts.map(post => (
-          <div key={post.id}>
+          <div key={post.id} className="post">
             <h3>{post.title}</h3>
             <p>{post.body}</p>
           </div>

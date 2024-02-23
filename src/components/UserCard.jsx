@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import './styles.css'
 function UserCard({ user, dbUserData, setDbUserData }) {
     const navigate = useNavigate();
+    
     const baseURL = 'https://sleepy-sari-duck.cyclic.app';
     
     // Check if the user exists in dbUserData
@@ -16,7 +18,7 @@ function UserCard({ user, dbUserData, setDbUserData }) {
 
         if (isUserPresent) {
             // Handle action for existing user
-            navigate(`/post/${user.id}`); // Navigate to PostPage with userId as route parameter
+            navigate(`/post/${user.id}`); 
         } else {
             // Handle action for new user
             console.log("Add user:", user.name);
